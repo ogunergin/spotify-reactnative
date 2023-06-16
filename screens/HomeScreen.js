@@ -1,35 +1,46 @@
-import { ScrollView, StyleSheet, Text, View, Dimensions } from "react-native";
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+  Dimensions,
+  Pressable,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
+import colors from "../constants/colors";
+import axios from "axios";
 
 const { width } = Dimensions.get("window");
 
 const HomeScreen = () => {
-  const [profile, setProfile] = useState(null);
+  const [recentlySongs, setRecentlySongs] = useState([]);
 
-  const getProfile = async () => {
+  const getRecentlyPlayedSongs = async () => {
     const token = await AsyncStorage.getItem("token");
     if (token) {
       try {
-        const response = await fetch("https://api.spotify.com/v1/me", {
+        const response = await axios({
+          method: "GET",
+          url: "https://api.spotify.com/v1/me/player/recently-played?limit=4",
           headers: {
-            Authorization: "Bearer " + token,
+            Authorization: `Bearer ${token}`,
           },
         });
-        const data = await response.json();
-        setProfile(data);
+        const tracks=response.data.items;
+         setRecentlySongs(tracks);
       } catch (error) {
-        console.log("profil çekilemedi", error);
+        console.log("recently çekilemedi", error);
       }
     }
   };
 
   useEffect(() => {
-    getProfile();
-    console.log(profile);
+    getRecentlyPlayedSongs();
+    console.log(recentlySongs);
   }, []);
 
   const greetingMessage = () => {
@@ -74,6 +85,40 @@ const HomeScreen = () => {
             <Feather name="settings" size={24} color="white" />
           </View>
         </View>
+
+        <View
+          style={{
+            marginTop: 20,
+            paddingLeft: width * 0.06,
+            flexDirection: "row",
+            gap: 12,
+          }}
+        >
+          <Pressable
+            style={{
+              backgroundColor: colors.gray,
+              paddingVertical: 8,
+              paddingHorizontal: 15,
+              borderRadius: 30,
+            }}
+          >
+            <Text style={{ color: "white" }}>Müzik</Text>
+          </Pressable>
+          <Pressable
+            style={{
+              backgroundColor: colors.gray,
+              paddingVertical: 8,
+              paddingHorizontal: 15,
+              borderRadius: 30,
+            }}
+          >
+            <Text style={{ color: "white" }}>Podcast'ler ve Programlar</Text>
+          </Pressable>
+        </View>
+
+            
+
+
       </ScrollView>
     </SafeAreaView>
   );
