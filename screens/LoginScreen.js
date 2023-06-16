@@ -7,18 +7,15 @@ import {
   Text,
   View,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Entypo } from "@expo/vector-icons";
 import colors from "../constants/colors";
 import { ResponseType, useAuthRequest } from "expo-auth-session";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useNavigation } from "@react-navigation/native";
 
 const { width } = Dimensions.get("window");
 
 const LoginScreen = ({ setIsAuth }) => {
-  const navigation = useNavigation();
-
   const discovery = {
     authorizationEndpoint: "https://accounts.spotify.com/authorize",
     tokenEndpoint: "https://accounts.spotify.com/api/token",

@@ -14,13 +14,19 @@ export default function App() {
       if (!expirationDate) return;
       const now = new Date();
       if (new Date(expirationDate) > now) {
+        //* token süresi dolmamış.
         setIsAuth(true);
+      } else {
+        setIsAuth(false);
+        AsyncStorage.removeItem("token");
+        AsyncStorage.removeItem("expirationDate");
       }
     };
     checkExpirationDate();
   }, []);
   return (
     <NavigationContainer>
+      {/* //* isAuth true ise MainNavigator açılır, false ise LoginScreen açılır. */}
       {isAuth ? <MainNavigator /> : <LoginScreen setIsAuth={setIsAuth} />}
       <StatusBar style="light" />
     </NavigationContainer>
