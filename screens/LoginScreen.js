@@ -7,13 +7,49 @@ import {
   Text,
   View,
 } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import { Entypo } from "@expo/vector-icons";
 import colors from "../constants/colors";
+import { ResponseType, useAuthRequest } from "expo-auth-session";
 
 const { width } = Dimensions.get("window");
 
 const LoginScreen = () => {
+  const discovery = {
+    authorizationEndpoint: "https://accounts.spotify.com/authorize",
+    tokenEndpoint: "https://accounts.spotify.com/api/token",
+  };
+  const [request, response, promptAsync] = useAuthRequest(
+    {
+      responseType: ResponseType.Token,
+      clientId: "d3ec2770ba704eb5a13807b6d867334c",
+      scopes: [
+        "user-read-currently-playing",
+        "user-read-recently-played",
+        "user-read-playback-state",
+        "user-top-read",
+        "user-modify-playback-state",
+        "streaming",
+        "user-read-email",
+        "user-read-private",
+      ],
+      // In order to follow the "Authorization Code Flow"
+      // to fetch token after authorizationEndpoint
+      // this must be set to false
+      usePKCE: false,
+      redirectUri: "exp://192.168.1.102:19000/",
+    },
+    discovery
+  );
+
+  useEffect(() => {
+    console.log(response);
+    if (response?.type === "success") {
+      const { access_token } = response.params;
+      console.log(response);
+    }
+  }, [response]);
+
   return (
     <SafeAreaView
       style={{
@@ -69,7 +105,11 @@ const LoginScreen = () => {
           />
           <Text style={styles.pressableText}>Apple ile devam et</Text>
         </Pressable>
-        <Pressable>
+        <Pressable
+          onPress={() => {
+            promptAsync();
+          }}
+        >
           <Text
             style={{
               color: "white",
