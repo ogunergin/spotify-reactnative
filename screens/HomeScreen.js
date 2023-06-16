@@ -5,6 +5,7 @@ import {
   View,
   Dimensions,
   Pressable,
+  Image,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -30,8 +31,9 @@ const HomeScreen = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-        const tracks=response.data.items;
-         setRecentlySongs(tracks);
+        const tracks = response.data.items;
+        setRecentlySongs(tracks);
+        console.log(recentlySongs[0]);
       } catch (error) {
         console.log("recently çekilemedi", error);
       }
@@ -40,7 +42,6 @@ const HomeScreen = () => {
 
   useEffect(() => {
     getRecentlyPlayedSongs();
-    console.log(recentlySongs);
   }, []);
 
   const greetingMessage = () => {
@@ -116,9 +117,60 @@ const HomeScreen = () => {
           </Pressable>
         </View>
 
-            
-
-
+        <View
+          style={{
+            marginTop: 25,
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            paddingHorizontal: width * 0.03,
+          }}
+        >
+          <Pressable
+            style={{
+              marginBottom: 10,
+              flexDirection: "row",
+              alignItems: "center",
+              gap: 7,
+              flex: 1,
+              marginVertical: 8,
+              backgroundColor: colors.gray,
+              borderRadius: 4,
+              elevation: 3,
+              maxWidth: width * 0.46,
+            }}
+          >
+            <Image
+              source={require("../assets/likedsongs.png")}
+              style={{ width: 60, height: 60 }}
+            />
+            <Text style={{ color: "white", fontSize: 13, fontWeight: "600" }}>
+              Beğeniler Şarkılar
+            </Text>
+          </Pressable>
+          <Pressable
+            style={{
+              marginBottom: 10,
+              flexDirection: "row",
+              alignItems: "center",
+              gap: 10,
+              flex: 1,
+              marginVertical: 8,
+              backgroundColor: colors.gray,
+              borderRadius: 4,
+              elevation: 3,
+              maxWidth: width * 0.46,
+            }}
+          >
+            <Image
+              source={require("../assets/randomcoverimage.jpeg")}
+              style={{ width: 60, height: 60 }}
+            />
+            <Text style={{ color: "white", fontSize: 13, fontWeight: "600" }}>
+              Beğeniler şarkılar
+            </Text>
+          </Pressable>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
