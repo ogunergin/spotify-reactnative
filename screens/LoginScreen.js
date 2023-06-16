@@ -11,10 +11,13 @@ import React, { useEffect } from "react";
 import { Entypo } from "@expo/vector-icons";
 import colors from "../constants/colors";
 import { ResponseType, useAuthRequest } from "expo-auth-session";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
 
 const { width } = Dimensions.get("window");
 
 const LoginScreen = () => {
+  const navigation = useNavigation();
   const discovery = {
     authorizationEndpoint: "https://accounts.spotify.com/authorize",
     tokenEndpoint: "https://accounts.spotify.com/api/token",
@@ -33,9 +36,6 @@ const LoginScreen = () => {
         "user-read-email",
         "user-read-private",
       ],
-      // In order to follow the "Authorization Code Flow"
-      // to fetch token after authorizationEndpoint
-      // this must be set to false
       usePKCE: false,
       redirectUri: "exp://192.168.1.102:19000/",
     },
@@ -43,10 +43,15 @@ const LoginScreen = () => {
   );
 
   useEffect(() => {
-    console.log(response);
     if (response?.type === "success") {
-      const { access_token } = response.params;
-      console.log(response);
+      const result = response.params;
+      AsyncStorage.setItem("token", result.access_token); //* token kaydetme
+
+      const expirationDate = new Date(
+        new Date().getTime() + result.expires_in * 1000
+      ); //* token süresi 3600 yani 1 saat dönüyor. 1 saat sonrasını hesaplayıp kaydediyoruz.
+      AsyncStorage.setItem("expirationDate", expirationDate.toString());
+      navigation.navigate("Main");
     }
   }, [response]);
 
