@@ -57,7 +57,7 @@ const LoginScreen = ({ setIsAuth }) => {
     <SafeAreaView
       style={{
         flex: 1,
-        backgroundColor: "#040306",
+        backgroundColor: colors.black,
         justifyContent: "flex-end",
       }}
     >

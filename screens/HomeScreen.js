@@ -17,13 +17,16 @@ import colors from "../constants/colors";
 import axios from "axios";
 import ArtistCard from "../components/ArtistCard";
 import RecentlyPlayedCard from "../components/RecentlyPlayedCard";
+import { useNavigation } from "@react-navigation/native";
 
-const { width, height } = Dimensions.get("window");
+const { width } = Dimensions.get("window");
 
 const HomeScreen = () => {
   const [recentlySongs, setRecentlySongs] = useState([]);
   const [topArtists, setTopArtists] = useState([]);
   const [featuredPlaylists, setFeaturedPlaylists] = useState([]);
+
+  const navigation = useNavigation();
 
   // const getRecentlyPlayedSongs = async () => {
   //   const token = await AsyncStorage.getItem("token");
@@ -107,7 +110,7 @@ const HomeScreen = () => {
   return (
     <SafeAreaView
       style={{
-        backgroundColor: "#040306",
+        backgroundColor: colors.black,
         flex: 1,
       }}
     >
@@ -176,6 +179,7 @@ const HomeScreen = () => {
           }}
         >
           <Pressable
+            onPress={() => navigation.navigate("Liked")}
             style={{
               flexDirection: "row",
               alignItems: "center",
