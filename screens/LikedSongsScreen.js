@@ -8,7 +8,7 @@ import {
   TextInput,
   Image,
 } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import colors from "../constants/colors";
 import { AntDesign } from "@expo/vector-icons";
@@ -16,11 +16,39 @@ import { Entypo } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 
 const { width } = Dimensions.get("window");
 
 const LikedSongsScreen = () => {
   const navigation = useNavigation();
+
+  const getLikedSongs = async () => {
+    const token = await AsyncStorage.getItem("token");
+    console.log(token);
+    if (token) {
+      try {
+        const response = await axios.get(
+          `https://api.spotify.com/v1/me/tracks?offset=0&limit=50`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        console.log(response.data.items[0].track.name);
+      } catch (error) {
+        console.log("liked songs çekilemedi", error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    getLikedSongs();
+  }, []);
+
   return (
     <LinearGradient colors={["#583582", "#1b3175"]} style={{ flex: 1 }}>
       <SafeAreaView
