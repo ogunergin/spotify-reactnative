@@ -6,6 +6,7 @@ import {
   Dimensions,
   Pressable,
   Image,
+  FlatList,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -14,34 +15,57 @@ import { Ionicons } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 import colors from "../constants/colors";
 import axios from "axios";
+import ArtistCard from "../components/ArtistCard";
 
 const { width } = Dimensions.get("window");
 
 const HomeScreen = () => {
   const [recentlySongs, setRecentlySongs] = useState([]);
+  const [topArtists, setTopArtists] = useState([]);
 
   const getRecentlyPlayedSongs = async () => {
     const token = await AsyncStorage.getItem("token");
     if (token) {
       try {
-        const response = await axios({
-          method: "GET",
-          url: "https://api.spotify.com/v1/me/player/recently-played?limit=4",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await axios.get(
+          "https://api.spotify.com/v1/me/player/recently-played?limit=4",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         const tracks = response.data.items;
         setRecentlySongs(tracks);
-        console.log(recentlySongs[0]);
       } catch (error) {
         console.log("recently çekilemedi", error);
       }
     }
   };
 
+  const getTopItems = async (type, setItem) => {
+    const token = await AsyncStorage.getItem("token");
+    if (token) {
+      try {
+        const response = await axios.get(
+          `https://api.spotify.com/v1/me/top/${type}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const data = response.data.items;
+        setItem(data);
+      } catch (error) {
+        console.log(`${type} çekilemedi --`, error);
+      }
+    }
+  };
+
   useEffect(() => {
     getRecentlyPlayedSongs();
+    getTopItems("artists", setTopArtists);
   }, []);
 
   const greetingMessage = () => {
@@ -128,12 +152,11 @@ const HomeScreen = () => {
         >
           <Pressable
             style={{
-              marginBottom: 10,
               flexDirection: "row",
               alignItems: "center",
               gap: 7,
               flex: 1,
-              marginVertical: 8,
+              marginVertical: 5,
               backgroundColor: colors.gray,
               borderRadius: 4,
               elevation: 3,
@@ -150,12 +173,11 @@ const HomeScreen = () => {
           </Pressable>
           <Pressable
             style={{
-              marginBottom: 10,
               flexDirection: "row",
               alignItems: "center",
               gap: 10,
               flex: 1,
-              marginVertical: 8,
+              marginVertical: 5,
               backgroundColor: colors.gray,
               borderRadius: 4,
               elevation: 3,
@@ -171,6 +193,32 @@ const HomeScreen = () => {
             </Text>
           </Pressable>
         </View>
+        <FlatList
+          scrollEnabled={false} //* ScrollView ile flatlist kullanıldığında scrollEnabled={false} yapılmalı
+          data={recentlySongs}
+          renderItem={renderItem}
+          numColumns={2}
+          columnWrapperStyle={{
+            justifyContent: "space-between",
+            paddingHorizontal: width * 0.03,
+          }}
+        />
+        <View
+          style={{ marginTop: 25, paddingHorizontal: width * 0.04, gap: 10 }}
+        >
+          <Text style={{ color: "white", fontSize: 18, fontWeight: "bold" }}>
+            En Sevdiğin Sanatçılar
+          </Text>
+          <ScrollView
+            contentContainerStyle={{ gap: 12 }}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+          >
+            {topArtists.map((artist, index) => (
+              <ArtistCard key={index} item={artist} />
+            ))}
+          </ScrollView>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -178,4 +226,31 @@ const HomeScreen = () => {
 
 export default HomeScreen;
 
-const styles = StyleSheet.create({});
+const renderItem = ({ item }) => {
+  return (
+    <Pressable
+      style={{
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 10,
+        flex: 1,
+        marginVertical: 5,
+        backgroundColor: colors.gray,
+        borderRadius: 4,
+        elevation: 3,
+        maxWidth: width * 0.46,
+      }}
+    >
+      <Image
+        source={{ uri: item.track.album.images[0].url }}
+        style={{ width: 60, height: 60 }}
+      />
+      <Text
+        numberOfLines={1}
+        style={{ color: "white", fontSize: 13, fontWeight: "600" }}
+      >
+        {item.track.name}
+      </Text>
+    </Pressable>
+  );
+};
