@@ -8,7 +8,7 @@ import {
   TextInput,
   Image,
 } from "react-native";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import colors from "../constants/colors";
 import { AntDesign } from "@expo/vector-icons";
@@ -18,15 +18,17 @@ import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import SongCard from "../components/SongCard";
 
 const { width } = Dimensions.get("window");
 
 const LikedSongsScreen = () => {
   const navigation = useNavigation();
 
+  const [likedSongs, setLikedSongs] = useState([]);
+
   const getLikedSongs = async () => {
     const token = await AsyncStorage.getItem("token");
-    console.log(token);
     if (token) {
       try {
         const response = await axios.get(
@@ -38,7 +40,7 @@ const LikedSongsScreen = () => {
           }
         );
 
-        console.log(response.data.items[0].track.name);
+        setLikedSongs(response.data.items);
       } catch (error) {
         console.log("liked songs çekilemedi", error);
       }
@@ -55,6 +57,7 @@ const LikedSongsScreen = () => {
         style={{
           paddingHorizontal: width * 0.05,
           flex: 1,
+          paddingBottom: 0,
         }}
       >
         <ScrollView style={{ flex: 1, marginTop: 10 }}>
@@ -164,6 +167,36 @@ const LikedSongsScreen = () => {
                 </Pressable>
               </View>
             </View>
+          </View>
+
+          <View style={{ marginTop: 20, marginBottom: 30 }}>
+            <Pressable
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 10,
+                marginBottom: 15,
+              }}
+            >
+              <View
+                style={{
+                  backgroundColor: colors.gray,
+                  width: 50,
+                  height: 50,
+                  borderRadius: 3,
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <AntDesign name="plus" size={27} color="white" />
+              </View>
+              <Text style={{ color: "white", fontSize: 16, fontWeight: "500" }}>
+                Şarkı Ekle
+              </Text>
+            </Pressable>
+            {likedSongs.map((song, index) => (
+              <SongCard key={index} item={song} />
+            ))}
           </View>
         </ScrollView>
       </SafeAreaView>
