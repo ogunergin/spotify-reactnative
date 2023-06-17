@@ -1,6 +1,5 @@
 import {
   ScrollView,
-  StyleSheet,
   Text,
   View,
   Dimensions,
@@ -19,7 +18,7 @@ import ArtistCard from "../components/ArtistCard";
 import RecentlyPlayedCard from "../components/RecentlyPlayedCard";
 import { useNavigation } from "@react-navigation/native";
 
-const { width } = Dimensions.get("window");
+const { width, height } = Dimensions.get("window");
 
 const HomeScreen = () => {
   const [recentlySongs, setRecentlySongs] = useState([]);
@@ -109,6 +108,7 @@ const HomeScreen = () => {
 
   return (
     <SafeAreaView
+      edges={["right", "left", "top"]} //* PaddingBottom 0 yapmak için
       style={{
         backgroundColor: colors.black,
         flex: 1,

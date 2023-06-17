@@ -57,10 +57,12 @@ const LikedSongsScreen = () => {
         style={{
           paddingHorizontal: width * 0.05,
           flex: 1,
-          paddingBottom: 0,
         }}
       >
-        <ScrollView style={{ flex: 1, marginTop: 10 }}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          style={{ flex: 1, marginTop: 10 }}
+        >
           {/* Back Button */}
           <Pressable onPress={() => navigation.goBack()}>
             <AntDesign name="left" size={20} color="white" />
@@ -169,7 +171,7 @@ const LikedSongsScreen = () => {
             </View>
           </View>
 
-          <View style={{ marginTop: 20, marginBottom: 30 }}>
+          <View style={{ marginTop: 20 }}>
             <Pressable
               style={{
                 flexDirection: "row",
