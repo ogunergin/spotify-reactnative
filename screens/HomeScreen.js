@@ -16,56 +16,81 @@ import { Feather } from "@expo/vector-icons";
 import colors from "../constants/colors";
 import axios from "axios";
 import ArtistCard from "../components/ArtistCard";
+import RecentlyPlayedCard from "../components/RecentlyPlayedCard";
 
-const { width } = Dimensions.get("window");
+const { width, height } = Dimensions.get("window");
 
 const HomeScreen = () => {
   const [recentlySongs, setRecentlySongs] = useState([]);
   const [topArtists, setTopArtists] = useState([]);
+  const [featuredPlaylists, setFeaturedPlaylists] = useState([]);
 
-  const getRecentlyPlayedSongs = async () => {
+  // const getRecentlyPlayedSongs = async () => {
+  //   const token = await AsyncStorage.getItem("token");
+  //   if (token) {
+  //     try {
+  //       const response = await axios.get(
+  //         "https://api.spotify.com/v1/me/player/recently-played",
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${token}`,
+  //           },
+  //         }
+  //       );
+  //       const tracks = response.data.items;
+  //       setRecentlySongs(tracks);
+  //     } catch (error) {
+  //       console.log("recently çekilemedi", error);
+  //     }
+  //   }
+  // };
+
+  // const getTopItems = async (type, setItem) => {
+  //   const token = await AsyncStorage.getItem("token");
+  //   if (token) {
+  //     try {
+  //       const response = await axios.get(
+  //         `https://api.spotify.com/v1/me/top/${type}`,
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${token}`,
+  //           },
+  //         }
+  //       );
+  //       const data = response.data.items;
+  //       setItem(data);
+  //     } catch (error) {
+  //       console.log(`${type} çekilemedi --`, error);
+  //     }
+  //   }
+  // };
+
+  const getData = async (url, setItem) => {
     const token = await AsyncStorage.getItem("token");
     if (token) {
       try {
-        const response = await axios.get(
-          "https://api.spotify.com/v1/me/player/recently-played?limit=4",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        const tracks = response.data.items;
-        setRecentlySongs(tracks);
+        const response = await axios.get(`https://api.spotify.com/v1/${url}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (url === "browse/featured-playlists") {
+          setItem(response.data.playlists.items);
+        } else {
+          setItem(response.data.items);
+        }
       } catch (error) {
-        console.log("recently çekilemedi", error);
-      }
-    }
-  };
-
-  const getTopItems = async (type, setItem) => {
-    const token = await AsyncStorage.getItem("token");
-    if (token) {
-      try {
-        const response = await axios.get(
-          `https://api.spotify.com/v1/me/top/${type}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        const data = response.data.items;
-        setItem(data);
-      } catch (error) {
-        console.log(`${type} çekilemedi --`, error);
+        console.log(`${url} çekilemedi`, error);
       }
     }
   };
 
   useEffect(() => {
-    getRecentlyPlayedSongs();
-    getTopItems("artists", setTopArtists);
+    // getRecentlyPlayedSongs(); //* kod temizliği
+
+    getData("me/player/recently-played", setRecentlySongs);
+    getData("me/top/artists", setTopArtists);
+    getData("browse/featured-playlists", setFeaturedPlaylists);
   }, []);
 
   const greetingMessage = () => {
@@ -195,7 +220,7 @@ const HomeScreen = () => {
         </View>
         <FlatList
           scrollEnabled={false} //* ScrollView ile flatlist kullanıldığında scrollEnabled={false} yapılmalı
-          data={recentlySongs}
+          data={recentlySongs.slice(0, 4)}
           renderItem={renderItem}
           numColumns={2}
           columnWrapperStyle={{
@@ -203,6 +228,22 @@ const HomeScreen = () => {
             paddingHorizontal: width * 0.03,
           }}
         />
+        <View
+          style={{ marginTop: 25, paddingHorizontal: width * 0.04, gap: 10 }}
+        >
+          <Text style={{ color: "white", fontSize: 18, fontWeight: "bold" }}>
+            Önerilen Çalma Listeleri
+          </Text>
+          <ScrollView
+            contentContainerStyle={{ gap: 12 }}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+          >
+            {featuredPlaylists.map((artist, index) => (
+              <ArtistCard key={index} item={artist} />
+            ))}
+          </ScrollView>
+        </View>
         <View
           style={{ marginTop: 25, paddingHorizontal: width * 0.04, gap: 10 }}
         >
@@ -216,6 +257,27 @@ const HomeScreen = () => {
           >
             {topArtists.map((artist, index) => (
               <ArtistCard key={index} item={artist} />
+            ))}
+          </ScrollView>
+        </View>
+
+        <View
+          style={{
+            marginVertical: 25,
+            paddingHorizontal: width * 0.04,
+            gap: 10,
+          }}
+        >
+          <Text style={{ color: "white", fontSize: 18, fontWeight: "bold" }}>
+            En Sevdiğin Sanatçılar
+          </Text>
+          <ScrollView
+            contentContainerStyle={{ gap: 12 }}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+          >
+            {recentlySongs.map((artist, index) => (
+              <RecentlyPlayedCard key={index} item={artist} />
             ))}
           </ScrollView>
         </View>

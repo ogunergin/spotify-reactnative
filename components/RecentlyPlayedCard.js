@@ -1,11 +1,11 @@
 import { Image, Text, View } from "react-native";
 import React from "react";
 
-const ArtistCard = ({ item }) => {
+const RecentlyPlayedCard = ({ item }) => {
   return (
     <View style={{ marginRight: 0 }}>
       <Image
-        source={{ uri: item.images[0].url }}
+        source={{ uri: item.track.album.images[0].url }}
         style={{
           width: 105,
           height: 105,
@@ -20,10 +20,10 @@ const ArtistCard = ({ item }) => {
           marginTop: 5,
         }}
       >
-        {item.name}
+        {item.track.name}
       </Text>
     </View>
   );
 };
 
-export default ArtistCard;
+export default RecentlyPlayedCard;

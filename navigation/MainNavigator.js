@@ -71,11 +71,7 @@ const MainNavigator = () => {
 
 const styles = StyleSheet.create({
   tabBarStyle: {
-    backgroundColor: "rgba(0,0,0,0.5)",
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
+    backgroundColor: "black",
     shadowOpacity: 4,
     shadowRadius: 4,
     elevation: 4,
