@@ -1,10 +1,11 @@
 import { StatusBar } from "expo-status-bar";
-import MainNavigator from "./navigation/MainNavigator";
+import MainNavigator, { BottomTabs } from "./navigation/MainNavigator";
 import { NavigationContainer } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import "expo-dev-client";
 import LoginScreen from "./screens/LoginScreen";
+import { PlayerContextProvider } from "./context/PlayerContext";
 
 export default function App() {
   const [isAuth, setIsAuth] = useState(false);
@@ -25,10 +26,13 @@ export default function App() {
     checkExpirationDate();
   }, []);
   return (
-    <NavigationContainer>
-      {/* //* isAuth true ise MainNavigator açılır, false ise LoginScreen açılır. */}
-      {isAuth ? <MainNavigator /> : <LoginScreen setIsAuth={setIsAuth} />}
-      <StatusBar style="light" />
-    </NavigationContainer>
+    <PlayerContextProvider>
+      <NavigationContainer>
+        {/* //* isAuth true ise MainNavigator açılır, false ise LoginScreen açılır. */}
+        {/* {isAuth ? <MainNavigator /> : <LoginScreen setIsAuth={setIsAuth} />} */}
+        <BottomTabs />
+        <StatusBar style="light" />
+      </NavigationContainer>
+    </PlayerContextProvider>
   );
 }

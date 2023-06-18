@@ -8,7 +8,7 @@ import {
   TextInput,
   Image,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import colors from "../constants/colors";
 import { AntDesign } from "@expo/vector-icons";
@@ -19,6 +19,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import SongCard from "../components/SongCard";
+import { PlayerContext } from "../context/PlayerContext";
 
 const { width } = Dimensions.get("window");
 
@@ -51,9 +52,14 @@ const LikedSongsScreen = () => {
     getLikedSongs();
   }, []);
 
-  const playTrack=async()=>{
+  const { currentSong, setCurrentSong } = useContext(PlayerContext);
 
-  }
+  const playTrack = async () => {
+    if(likedSongs.length>0){
+      setCurrentSong(likedSongs[0])
+    }
+    
+  };
 
   return (
     <LinearGradient colors={["#583582", "#1b3175"]} style={{ flex: 1 }}>
@@ -160,7 +166,7 @@ const LikedSongsScreen = () => {
                   style={{ opacity: 0.7, height: 28, width: 28 }}
                 />
                 <Pressable
-                onPress={playTrack}
+                  onPress={playTrack}
                   style={{
                     backgroundColor: colors.green,
                     height: 50,

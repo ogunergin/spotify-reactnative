@@ -18,6 +18,7 @@ import ArtistCard from "../components/ArtistCard";
 import RecentlyPlayedCard from "../components/RecentlyPlayedCard";
 import { useNavigation } from "@react-navigation/native";
 
+
 const { width, height } = Dimensions.get("window");
 
 const HomeScreen = () => {
@@ -105,6 +106,8 @@ const HomeScreen = () => {
       return "İyi akşamlar";
     }
   };
+
+
 
   return (
     <SafeAreaView
