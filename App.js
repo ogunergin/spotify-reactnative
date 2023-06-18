@@ -29,8 +29,8 @@ export default function App() {
     <PlayerContextProvider>
       <NavigationContainer>
         {/* //* isAuth true ise MainNavigator açılır, false ise LoginScreen açılır. */}
-        {/* {isAuth ? <MainNavigator /> : <LoginScreen setIsAuth={setIsAuth} />} */}
-        <BottomTabs />
+         {isAuth ? <BottomTabs /> : <LoginScreen setIsAuth={setIsAuth} />} 
+        {/* <BottomTabs /> */}
         <StatusBar style="light" />
       </NavigationContainer>
     </PlayerContextProvider>

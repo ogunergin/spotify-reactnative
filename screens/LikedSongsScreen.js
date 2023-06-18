@@ -29,6 +29,8 @@ const LikedSongsScreen = () => {
   const [likedSongs, setLikedSongs] = useState([]);
 
   const getLikedSongs = async () => {
+    //  await AsyncStorage.removeItem("token");
+    // await AsyncStorage.removeItem("expirationDate");
     const token = await AsyncStorage.getItem("token");
     if (token) {
       try {
@@ -55,10 +57,9 @@ const LikedSongsScreen = () => {
   const { currentSong, setCurrentSong } = useContext(PlayerContext);
 
   const playTrack = async () => {
-    if(likedSongs.length>0){
-      setCurrentSong(likedSongs[0])
+    if (likedSongs.length > 0) {
+      setCurrentSong(likedSongs[0]);
     }
-    
   };
 
   return (

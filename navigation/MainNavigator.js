@@ -16,6 +16,7 @@ const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 export const BottomTabs = () => {
+  const { currentSong } = useContext(PlayerContext);
   return (
     <>
       <Tab.Navigator
@@ -55,7 +56,7 @@ export const BottomTabs = () => {
           }}
         />
       </Tab.Navigator>
-      <FooterSongPlayer />
+      {currentSong && <FooterSongPlayer />}
     </>
   );
 };
