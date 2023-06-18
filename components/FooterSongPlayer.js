@@ -13,8 +13,11 @@ import { Entypo } from "@expo/vector-icons";
 const { width } = Dimensions.get("window");
 
 const FooterSongPlayer = () => {
-  const { bottomTabHeight, currentSong } = useContext(PlayerContext);
-  console.log(currentSong?.track?.album?.artists)
+  const { bottomTabHeight, currentSong, progress } = useContext(PlayerContext);
+  const artistNames = currentSong?.track?.artists
+    .map((artist) => artist.name)
+    .join(", ");
+
   return (
     <View
       style={[
@@ -37,7 +40,7 @@ const FooterSongPlayer = () => {
             {currentSong?.track?.name}
           </Text>
           <Text style={[styles.textBase, { fontWeight: "400" }]}>
-            Ali Kınık
+            {artistNames}
           </Text>
         </View>
       </View>
@@ -52,6 +55,26 @@ const FooterSongPlayer = () => {
           <Entypo name="controller-play" size={24} color="white" />
         </Pressable>
       </View>
+      <View  style={{
+          position: "absolute",
+          backgroundColor: "white",
+          bottom: 0.5,
+          height: 2,
+          width: `${Math.min(progress * 100, 97)}%`,
+          borderRadius: 2,
+          marginLeft: "3%",
+        }} />
+      <View
+        style={{
+          position: "absolute",
+          backgroundColor: "hsla(0,0%,100%,.3)",
+          bottom: 0.5,
+          height: 2,
+          width: "97%",
+          borderRadius: 2,
+          marginLeft: "3%",
+        }}
+      />
     </View>
   );
 };
@@ -70,8 +93,8 @@ const styles = StyleSheet.create({
     width: width * 0.95,
   },
   image: {
-    height: 45,
-    width: 45,
+    height: 42,
+    width: 42,
     borderRadius: 4,
   },
   textBase: {

@@ -6,14 +6,16 @@ import {
   Image,
   Dimensions,
 } from "react-native";
-import React from "react";
+import React, { useContext } from "react";
 import { Entypo } from "@expo/vector-icons";
+import { PlayerContext } from "../context/PlayerContext";
 
 const { width } = Dimensions.get("window");
 
 const SongCard = ({ item }) => {
+  const { setCurrentSong } = useContext(PlayerContext);
   return (
-    <Pressable style={styles.container}>
+    <Pressable onPress={() => setCurrentSong(item)} style={styles.container}>
       <View
         style={{
           flexDirection: "row",

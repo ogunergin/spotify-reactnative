@@ -20,6 +20,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import SongCard from "../components/SongCard";
 import { PlayerContext } from "../context/PlayerContext";
+import { Audio } from "expo-av";
 
 const { width } = Dimensions.get("window");
 
@@ -54,13 +55,53 @@ const LikedSongsScreen = () => {
     getLikedSongs();
   }, []);
 
-  const { currentSong, setCurrentSong } = useContext(PlayerContext);
+  const { currentSong, setCurrentSong,progress ,setProgress } =
+    useContext(PlayerContext);
+  const [currentSound, setCurrentSound] = useState(null);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [totalDuration, setTotalDuration] = useState(0);
 
   const playTrack = async () => {
     if (likedSongs.length > 0) {
       setCurrentSong(likedSongs[0]);
     }
+    await play(likedSongs[0]);
   };
+
+  const play = async (song) => {
+    try {
+      await Audio.setAudioModeAsync({
+        playsInSilentModeIOS: true,
+        staysActiveInBackground: true,
+        shouldDuckAndroid: false,
+      });
+      const { sound, status } = await Audio.Sound.createAsync(
+        {
+          uri: song?.track?.preview_url,
+        },
+        {
+          shouldPlay: true,
+          isLooping: false,
+        },
+        onPlayBackStatusUpdate
+      );
+      onPlayBackStatusUpdate(status);
+      setCurrentSound(sound);
+      await sound.playAsync();
+    } catch (error) {
+      console.log("şarkı çalınamadı --", error);
+    }
+  };
+
+  const onPlayBackStatusUpdate = async (status) => {
+    if (status.isLoaded && status.isPlaying) {
+      const calculatedProgress = status.positionMillis / status.durationMillis;
+      setProgress(calculatedProgress);
+      setCurrentTime(calculatedProgress.positionMillis);
+      setTotalDuration(status.durationMillis);
+    }
+  };
+
 
   return (
     <LinearGradient colors={["#583582", "#1b3175"]} style={{ flex: 1 }}>
