@@ -29,7 +29,9 @@ const SongCard = ({ item }) => {
           <Text numberOfLines={1} style={styles.songName}>
             {item?.track?.name}
           </Text>
-          <Text style={styles.albumName}>10 NUMARA</Text>
+          <Text numberOfLines={1} style={styles.albumName}>
+            {item?.track?.album?.artists[0].name} - {item?.track?.album?.name}
+          </Text>
         </View>
       </View>
       <Pressable style={{ padding: 2 }}>

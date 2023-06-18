@@ -51,6 +51,10 @@ const LikedSongsScreen = () => {
     getLikedSongs();
   }, []);
 
+  const playTrack=async()=>{
+
+  }
+
   return (
     <LinearGradient colors={["#583582", "#1b3175"]} style={{ flex: 1 }}>
       <SafeAreaView
@@ -156,6 +160,7 @@ const LikedSongsScreen = () => {
                   style={{ opacity: 0.7, height: 28, width: 28 }}
                 />
                 <Pressable
+                onPress={playTrack}
                   style={{
                     backgroundColor: colors.green,
                     height: 50,
