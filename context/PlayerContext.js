@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useRef, useState } from "react";
 
 export const PlayerContext = createContext();
 
@@ -8,7 +8,7 @@ export const PlayerContextProvider = ({ children }) => {
   const [progress, setProgress] = useState(null);
   const [isPlaying, setIsPlaying] = useState();
   const [currentSound, setCurrentSound] = useState(null);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const currentIndex = useRef(0);
 
   //* Çalan müziği duraklatma / başlatma
   const handlePlayPause = async () => {
@@ -35,7 +35,8 @@ export const PlayerContextProvider = ({ children }) => {
         setIsPlaying,
         currentSound,
         setCurrentSound,
-        handlePlayPause,currentIndex, setCurrentIndex
+        handlePlayPause,
+        currentIndex,
       }}
     >
       {children}

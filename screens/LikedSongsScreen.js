@@ -8,7 +8,7 @@ import {
   TextInput,
   Image,
 } from "react-native";
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useRef } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import colors from "../constants/colors";
 import { AntDesign } from "@expo/vector-icons";
@@ -43,8 +43,6 @@ const LikedSongsScreen = () => {
         );
 
         setLikedSongs(response.data.items);
-        setCurrentSong(response.data.items[0]);
-        setCurrentIndex(0);
       } catch (error) {
         console.log("liked songs çekilemedi", error);
       }
@@ -63,7 +61,6 @@ const LikedSongsScreen = () => {
     currentSound,
     setCurrentSound,
     currentIndex,
-    setCurrentIndex,
   } = useContext(PlayerContext);
 
   //* Beğenilen şarkıların ilkini çalma
@@ -72,7 +69,6 @@ const LikedSongsScreen = () => {
       // setCurrentSong(likedSongs[0]);
       await play(likedSongs[0]);
       setCurrentSong(likedSongs[0]);
-      setCurrentIndex(0);
     }
   };
 
@@ -124,14 +120,13 @@ const LikedSongsScreen = () => {
       await currentSound.stopAsync();
       setCurrentSound(null);
     }
-    setTimeout(() => {
-      console.log("current time", currentIndex); // Kopyalanan değeri kullanarak log çıktısı alın
-    }, 0);
 
-    const asd = likedSongs[currentIndex];
-
-    console.log("current index", currentIndex);
-    console.log("current index", asd);
+    const nextTrack = likedSongs[currentIndex.current + 1];
+    currentIndex.current += 1;
+    if (nextTrack) {
+      setCurrentSong(nextTrack);
+      await play(nextTrack);
+    }
   };
 
   //* Müziğe tıklayınca çalan müziğin kapanması ve tıklanan müziğin çalması
@@ -139,25 +134,14 @@ const LikedSongsScreen = () => {
     console.log("qew", index);
     if (currentSound) {
       await currentSound.stopAsync();
-      setCurrentSong(song);
-      setCurrentIndex(index);
-      await play(song);
-    } else {
-      setCurrentSong(song);
-      await play(song);
-      setCurrentIndex(index);
     }
+    currentIndex.current = index;
+    setCurrentSong(song);
+    await play(song);
   };
 
-  useEffect(() => {
-    console.log("useee", currentIndex);
-  }, [currentIndex]);
-
   return (
-    <LinearGradient
-      colors={["#583582", "#1b3175"]}
-      style={{ flex: 1, }}
-    >
+    <LinearGradient colors={["#583582", "#1b3175"]} style={{ flex: 1 }}>
       <SafeAreaView
         style={{
           paddingHorizontal: width * 0.05,
