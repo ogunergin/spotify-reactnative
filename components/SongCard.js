@@ -6,16 +6,14 @@ import {
   Image,
   Dimensions,
 } from "react-native";
-import React, { useContext } from "react";
+import React from "react";
 import { Entypo } from "@expo/vector-icons";
-import { PlayerContext } from "../context/PlayerContext";
 
 const { width } = Dimensions.get("window");
 
-const SongCard = ({ item }) => {
-  const { setCurrentSong } = useContext(PlayerContext);
+const SongCard = ({ item,handleCardPress }) => {
   return (
-    <Pressable onPress={() => setCurrentSong(item)} style={styles.container}>
+    <Pressable onPress={handleCardPress} style={styles.container}>
       <View
         style={{
           flexDirection: "row",
@@ -36,7 +34,7 @@ const SongCard = ({ item }) => {
           </Text>
         </View>
       </View>
-      <Pressable style={{ padding: 2 }}>
+      <Pressable  style={{ padding: 2 }}>
         <Entypo name="dots-three-horizontal" size={18} color="#a7a7a7" />
       </Pressable>
     </Pressable>

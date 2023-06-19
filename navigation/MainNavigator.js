@@ -62,11 +62,13 @@ export const BottomTabs = () => {
 };
 
 const MainNavigator = () => {
+  //* Bottom tab bar height'ini bulup context'e kaydetme
   const bottomTabBarHeight = useBottomTabBarHeight();
   const { setBottomTabHeight } = useContext(PlayerContext);
   useEffect(() => {
     setBottomTabHeight(bottomTabBarHeight);
   }, [bottomTabBarHeight]);
+
   return (
     <Stack.Navigator>
       <Stack.Group>

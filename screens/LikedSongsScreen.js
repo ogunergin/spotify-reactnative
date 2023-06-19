@@ -30,8 +30,6 @@ const LikedSongsScreen = () => {
   const [likedSongs, setLikedSongs] = useState([]);
 
   const getLikedSongs = async () => {
-    //  await AsyncStorage.removeItem("token");
-    // await AsyncStorage.removeItem("expirationDate");
     const token = await AsyncStorage.getItem("token");
     if (token) {
       try {
@@ -55,12 +53,18 @@ const LikedSongsScreen = () => {
     getLikedSongs();
   }, []);
 
-  const { currentSong, setCurrentSong,progress ,setProgress } =
-    useContext(PlayerContext);
-  const [currentSound, setCurrentSound] = useState(null);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [totalDuration, setTotalDuration] = useState(0);
+  const {
+    currentSong,
+    setCurrentSong,
+    progress,
+    setProgress,
+    isPlaying,
+    setIsPlaying,
+    currentSound,
+    setCurrentSound,
+  } = useContext(PlayerContext);
 
+  //* Beğenilen şarkıların ilkini çalma
   const playTrack = async () => {
     if (likedSongs.length > 0) {
       setCurrentSong(likedSongs[0]);
@@ -68,6 +72,7 @@ const LikedSongsScreen = () => {
     await play(likedSongs[0]);
   };
 
+  //* Müziği çalma
   const play = async (song) => {
     try {
       await Audio.setAudioModeAsync({
@@ -87,21 +92,30 @@ const LikedSongsScreen = () => {
       );
       onPlayBackStatusUpdate(status);
       setCurrentSound(sound);
+      setIsPlaying(status.isPlaying);
       await sound.playAsync();
     } catch (error) {
       console.log("şarkı çalınamadı --", error);
     }
   };
 
+  //* Çalan müziğin progress barının güncellenmesi
   const onPlayBackStatusUpdate = async (status) => {
     if (status.isLoaded && status.isPlaying) {
       const calculatedProgress = status.positionMillis / status.durationMillis;
       setProgress(calculatedProgress);
-      setCurrentTime(calculatedProgress.positionMillis);
-      setTotalDuration(status.durationMillis);
     }
   };
 
+  //* Müziğe tıklayınca çalan müziğin kapanması ve tıklanan müziğin çalması
+  const handleCardPress = async (song) => {
+    if (currentSound) {
+      await currentSound.stopAsync();
+      setCurrentSound(song);
+      setCurrentSong(song);
+      await play(song);
+    }
+  };
 
   return (
     <LinearGradient colors={["#583582", "#1b3175"]} style={{ flex: 1 }}>
@@ -250,7 +264,11 @@ const LikedSongsScreen = () => {
               </Text>
             </Pressable>
             {likedSongs.map((song, index) => (
-              <SongCard key={index} item={song} />
+              <SongCard
+                key={index}
+                item={song}
+                handleCardPress={() => handleCardPress(song)}
+              />
             ))}
           </View>
         </ScrollView>

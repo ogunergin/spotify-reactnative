@@ -9,11 +9,15 @@ import {
 import React, { useContext } from "react";
 import { PlayerContext } from "../context/PlayerContext";
 import { Entypo } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 
 const { width } = Dimensions.get("window");
 
 const FooterSongPlayer = () => {
-  const { bottomTabHeight, currentSong, progress } = useContext(PlayerContext);
+  const { bottomTabHeight, currentSong, progress, handlePlayPause, isPlaying } =
+    useContext(PlayerContext);
+
+  //* Müziğin sanatçı isimlerini birleştirme
   const artistNames = currentSong?.track?.artists
     .map((artist) => artist.name)
     .join(", ");
@@ -35,8 +39,11 @@ const FooterSongPlayer = () => {
           }}
           style={styles.image}
         />
-        <View style={{ flexDirection: "column" }}>
-          <Text style={[styles.textBase, { fontWeight: "700" }]}>
+        <View style={{ flexDirection: "column", maxWidth: "70%" }}>
+          <Text
+            numberOfLines={1}
+            style={[styles.textBase, { fontWeight: "700" }]}
+          >
             {currentSong?.track?.name}
           </Text>
           <Text style={[styles.textBase, { fontWeight: "400" }]}>
@@ -51,11 +58,16 @@ const FooterSongPlayer = () => {
             style={{ height: 24, width: 24 }}
           />
         </Pressable>
-        <Pressable style={{ padding: 8 }}>
-          <Entypo name="controller-play" size={24} color="white" />
+        <Pressable onPress={handlePlayPause} style={{ padding: 8 }}>
+          {isPlaying ? (
+            <Ionicons name="pause" size={24} color="white" />
+          ) : (
+            <Entypo name="controller-play" size={24} color="white" />
+          )}
         </Pressable>
       </View>
-      <View  style={{
+      <View
+        style={{
           position: "absolute",
           backgroundColor: "white",
           bottom: 0.5,
@@ -63,7 +75,8 @@ const FooterSongPlayer = () => {
           width: `${Math.min(progress * 100, 97)}%`,
           borderRadius: 2,
           marginLeft: "3%",
-        }} />
+        }}
+      />
       <View
         style={{
           position: "absolute",
