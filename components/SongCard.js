@@ -11,7 +11,7 @@ import { Entypo } from "@expo/vector-icons";
 
 const { width } = Dimensions.get("window");
 
-const SongCard = ({ item,handleCardPress }) => {
+const SongCard = ({ item, handleCardPress }) => {
   return (
     <Pressable onPress={handleCardPress} style={styles.container}>
       <View
@@ -34,7 +34,7 @@ const SongCard = ({ item,handleCardPress }) => {
           </Text>
         </View>
       </View>
-      <Pressable  style={{ padding: 2 }}>
+      <Pressable style={{ padding: 2 }}>
         <Entypo name="dots-three-horizontal" size={18} color="#a7a7a7" />
       </Pressable>
     </Pressable>

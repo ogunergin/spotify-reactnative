@@ -8,9 +8,9 @@ export const PlayerContextProvider = ({ children }) => {
   const [progress, setProgress] = useState(null);
   const [isPlaying, setIsPlaying] = useState();
   const [currentSound, setCurrentSound] = useState(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
-
-//* Çalan müziği duraklatma / başlatma
+  //* Çalan müziği duraklatma / başlatma
   const handlePlayPause = async () => {
     if (currentSound) {
       if (isPlaying) {
@@ -35,7 +35,7 @@ export const PlayerContextProvider = ({ children }) => {
         setIsPlaying,
         currentSound,
         setCurrentSound,
-        handlePlayPause,
+        handlePlayPause,currentIndex, setCurrentIndex
       }}
     >
       {children}

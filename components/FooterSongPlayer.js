@@ -6,7 +6,7 @@ import {
   Dimensions,
   Pressable,
 } from "react-native";
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { PlayerContext } from "../context/PlayerContext";
 import { Entypo } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
@@ -21,6 +21,10 @@ const FooterSongPlayer = () => {
   const artistNames = currentSong?.track?.artists
     .map((artist) => artist.name)
     .join(", ");
+
+    useEffect(()=>{
+      console.log("isPlaying", isPlaying)
+    },[isPlaying])
 
   return (
     <View
@@ -46,7 +50,10 @@ const FooterSongPlayer = () => {
           >
             {currentSong?.track?.name}
           </Text>
-          <Text style={[styles.textBase, { fontWeight: "400" }]}>
+          <Text
+            numberOfLines={1}
+            style={[styles.textBase, { fontWeight: "400" }]}
+          >
             {artistNames}
           </Text>
         </View>

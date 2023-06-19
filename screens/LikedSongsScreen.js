@@ -43,6 +43,8 @@ const LikedSongsScreen = () => {
         );
 
         setLikedSongs(response.data.items);
+        setCurrentSong(response.data.items[0]);
+        setCurrentIndex(0);
       } catch (error) {
         console.log("liked songs çekilemedi", error);
       }
@@ -56,28 +58,33 @@ const LikedSongsScreen = () => {
   const {
     currentSong,
     setCurrentSong,
-    progress,
     setProgress,
-    isPlaying,
     setIsPlaying,
     currentSound,
     setCurrentSound,
+    currentIndex,
+    setCurrentIndex,
   } = useContext(PlayerContext);
 
   //* Beğenilen şarkıların ilkini çalma
   const playTrack = async () => {
     if (likedSongs.length > 0) {
+      // setCurrentSong(likedSongs[0]);
+      await play(likedSongs[0]);
       setCurrentSong(likedSongs[0]);
+      setCurrentIndex(0);
     }
-    await play(likedSongs[0]);
   };
 
   //* Müziği çalma
   const play = async (song) => {
     try {
+      if (currentSound) {
+        await currentSound.stopAsync();
+      }
       await Audio.setAudioModeAsync({
         playsInSilentModeIOS: true,
-        staysActiveInBackground: true,
+        staysActiveInBackground: false,
         shouldDuckAndroid: false,
       });
       const { sound, status } = await Audio.Sound.createAsync(
@@ -90,7 +97,7 @@ const LikedSongsScreen = () => {
         },
         onPlayBackStatusUpdate
       );
-      onPlayBackStatusUpdate(status);
+      await onPlayBackStatusUpdate(status);
       setCurrentSound(sound);
       setIsPlaying(status.isPlaying);
       await sound.playAsync();
@@ -105,20 +112,52 @@ const LikedSongsScreen = () => {
       const calculatedProgress = status.positionMillis / status.durationMillis;
       setProgress(calculatedProgress);
     }
-  };
 
-  //* Müziğe tıklayınca çalan müziğin kapanması ve tıklanan müziğin çalması
-  const handleCardPress = async (song) => {
-    if (currentSound) {
-      await currentSound.stopAsync();
-      setCurrentSound(song);
-      setCurrentSong(song);
-      await play(song);
+    if (status.didJustFinish === true) {
+      setCurrentSound(null);
+      await playNextTrack();
     }
   };
 
+  const playNextTrack = async () => {
+    if (currentSound) {
+      await currentSound.stopAsync();
+      setCurrentSound(null);
+    }
+    setTimeout(() => {
+      console.log("current time", currentIndex); // Kopyalanan değeri kullanarak log çıktısı alın
+    }, 0);
+
+    const asd = likedSongs[currentIndex];
+
+    console.log("current index", currentIndex);
+    console.log("current index", asd);
+  };
+
+  //* Müziğe tıklayınca çalan müziğin kapanması ve tıklanan müziğin çalması
+  const handleCardPress = async (song, index) => {
+    console.log("qew", index);
+    if (currentSound) {
+      await currentSound.stopAsync();
+      setCurrentSong(song);
+      setCurrentIndex(index);
+      await play(song);
+    } else {
+      setCurrentSong(song);
+      await play(song);
+      setCurrentIndex(index);
+    }
+  };
+
+  useEffect(() => {
+    console.log("useee", currentIndex);
+  }, [currentIndex]);
+
   return (
-    <LinearGradient colors={["#583582", "#1b3175"]} style={{ flex: 1 }}>
+    <LinearGradient
+      colors={["#583582", "#1b3175"]}
+      style={{ flex: 1, }}
+    >
       <SafeAreaView
         style={{
           paddingHorizontal: width * 0.05,
@@ -267,7 +306,7 @@ const LikedSongsScreen = () => {
               <SongCard
                 key={index}
                 item={song}
-                handleCardPress={() => handleCardPress(song)}
+                handleCardPress={() => handleCardPress(song, index)}
               />
             ))}
           </View>
